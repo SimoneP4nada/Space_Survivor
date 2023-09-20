@@ -6,7 +6,7 @@ from projectile import Projectile
 # Inizializzazione delle dimensioni della finestra di gioco
 WIDTH = 700
 HEIGHT = 700
-
+ 
 # Inizializzazione dei colori
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
