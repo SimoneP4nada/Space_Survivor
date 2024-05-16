@@ -3,6 +3,7 @@ import random
 from entity import Shuttle, Alien
 from projectile import Projectile
 
+
 # Inizializzazione delle dimensioni della finestra di gioco
 WIDTH = 700
 HEIGHT = 700
