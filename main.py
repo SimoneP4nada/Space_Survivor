@@ -3,11 +3,10 @@ import random
 from entity import Shuttle, Alien
 from projectile import Projectile
 
-
 # Inizializzazione delle dimensioni della finestra di gioco
 WIDTH = 700
 HEIGHT = 700
- 
+
 # Inizializzazione dei colori
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -98,7 +97,7 @@ def game_over():
 
     running = False
     screen.fill(BLACK)
-    game_over_text = font.render("GAME OVER", True, WHITE)
+    game_over_text = font.render("GAME OVER. Premi SPAZIO per ricominciare", True, WHITE)
     score_text = font.render("Score: " + str(score), True, WHITE)
     screen.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2 - game_over_text.get_height() // 2 - 50))
     screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 - score_text.get_height() // 2 + 50))
@@ -109,7 +108,7 @@ def game_victory():
 
     running = False
     screen.fill(BLACK)
-    victory_text = font.render("VICTORY!", True, WHITE)
+    victory_text = font.render("VICTORY! Premi SPAZIO per ricominciare", True, WHITE)
     score_text = font.render("Score: " + str(score), True, WHITE)
     screen.blit(victory_text, (WIDTH // 2 - victory_text.get_width() // 2, HEIGHT // 2 - victory_text.get_height() // 2 - 50))
     screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 - score_text.get_height() // 2 + 50))
@@ -118,70 +117,86 @@ def game_victory():
 # Creazione degli alieni
 create_aliens()
 
-# Ciclo principale del gioco
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+# Loop esterno del gioco
+while True:
+    # Loop del gioco
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    # Movimento dello shuttle
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and shuttle.rect.centerx >= 30:
-        shuttle.move_left(SHUTTLE_SPEED)
-    if keys[pygame.K_RIGHT] and shuttle.rect.centerx <= WIDTH - 30:
-        shuttle.move_right(SHUTTLE_SPEED)
-    if keys[pygame.K_SPACE]:
+        # Movimento dello shuttle
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and shuttle.rect.centerx >= 30:
+            shuttle.move_left(SHUTTLE_SPEED)
+        if keys[pygame.K_RIGHT] and shuttle.rect.centerx <= WIDTH - 30:
+            shuttle.move_right(SHUTTLE_SPEED)
+        if keys[pygame.K_SPACE]:
+            current_time = pygame.time.get_ticks()
+            if current_time - last_shuttle_shoot_time >= COOLDOWN_SHUTTLE_SHOOT_TIME:
+                create_shuttle_projectile()
+                shuttle_shoot_sound.play()
+                last_shuttle_shoot_time = current_time
+
+        # Movimento degli alieni
         current_time = pygame.time.get_ticks()
-        if current_time - last_shuttle_shoot_time >= COOLDOWN_SHUTTLE_SHOOT_TIME:
-            create_shuttle_projectile()
-            shuttle_shoot_sound.play()
-            last_shuttle_shoot_time = current_time
-
-    # Movimento degli alieni
-    current_time = pygame.time.get_ticks()
-    if current_time % 2000 == 0:
-        for alien in aliens:
-            if alien.rect.x <= 30 or alien.rect.x >= WIDTH - alien.rect.width - 30:
-                alien.move_down(ALIEN_SPEED)
-            else:
-                if alien.rect.y % (2 * alien.rect.height) == 0:
-                    alien.move_left(ALIEN_SPEED)
+        if current_time % 2000 == 0:
+            for alien in aliens:
+                if alien.rect.x <= 30 or alien.rect.x >= WIDTH - alien.rect.width - 30:
+                    alien.move_down(ALIEN_SPEED)
                 else:
-                    alien.move_right(ALIEN_SPEED)
+                    if alien.rect.y % (2 * alien.rect.height) == 0:
+                        alien.move_left(ALIEN_SPEED)
+                    else:
+                        alien.move_right(ALIEN_SPEED)
 
-    for alien in aliens:
-        alien.update(ALIEN_SPEED)  # Aggiornamento del movimento degli alieni
+        for alien in aliens:
+            alien.update(ALIEN_SPEED)  # Aggiornamento del movimento degli alieni
 
-    # Shooting degli alieni
-    current_time = pygame.time.get_ticks()
-    if current_time - last_alien_shoot_time >= COOLDOWN_ALIEN_SHOOT_TIME:
-        alien_to_shoot = random.choice(aliens)
-        create_alien_projectile(alien_to_shoot)
-        last_alien_shoot_time = current_time
+        # Shooting degli alieni
+        current_time = pygame.time.get_ticks()
+        if current_time - last_alien_shoot_time >= COOLDOWN_ALIEN_SHOOT_TIME:
+            alien_to_shoot = random.choice(aliens)
+            create_alien_projectile(alien_to_shoot)
+            last_alien_shoot_time = current_time
 
-    # Pulizia dello schermo
-    screen.fill(BLACK)
+        # Pulizia dello schermo
+        screen.fill(BLACK)
 
-    # Disegno dello shuttle, degli alieni e dei proiettili 
-    shuttle.draw(screen)  # Disegna lo shuttle
-    for alien in aliens:
-        alien.draw(screen)  # Disegna gli alieni
-    draw_projectiles()  # Disegna i proiettili
+        # Disegno dello shuttle, degli alieni e dei proiettili 
+        shuttle.draw(screen)  # Disegna lo shuttle
+        for alien in aliens:
+            alien.draw(screen)  # Disegna gli alieni
+        draw_projectiles()  # Disegna i proiettili
 
-    # Muovi i proiettili
-    move_projectiles()
+        # Muovi i proiettili
+        move_projectiles()
 
-    # Controllo delle collisioni
-    check_collisions()
+        # Controllo delle collisioni
+        check_collisions()
 
-    # Controllo vittoria
-    if len(aliens) == 0:
-        game_victory()
+        # Controllo vittoria
+        if len(aliens) == 0:
+            game_victory()
 
-    # Aggiornamento dello schermo
-    pygame.display.flip()
-    clock.tick(60)
+        # Aggiornamento dello schermo
+        pygame.display.flip()
+        clock.tick(60)
 
-# Chiusura di pygame
-pygame.quit()
+    # Schermata di game over o vittoria
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    waiting = False
+                    # Reset delle variabili
+                    shuttle_projectiles = []
+                    alien_projectiles = []
+                    score = 0
+                    create_aliens()
+                    running = True
