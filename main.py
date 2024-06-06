@@ -20,7 +20,7 @@ ALIEN_SPEED = 6
 shuttle_projectiles = []
 alien_projectiles = []
 COOLDOWN_SHUTTLE_SHOOT_TIME = 800  # in millisecondi
-COOLDOWN_ALIEN_SHOOT_TIME = 1100  # in millisecondi
+COOLDOWN_ALIEN_SHOOT_TIME = 1000  # in millisecondi
 last_shuttle_shoot_time = 0
 last_alien_shoot_time = 0
 
