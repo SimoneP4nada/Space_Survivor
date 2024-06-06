@@ -143,7 +143,7 @@ def game_over():
 
     running = False
     screen.fill(BLACK)
-    game_over_text = font.render("GAME OVER. Premi SPAZIO per ricominciare", True, WHITE)
+    game_over_text = font.render("GAME OVER. Press SPACE to try again", True, WHITE)
     score_text = font.render("Score: " + str(score), True, WHITE)
     screen.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2 - game_over_text.get_height() // 2 - 50))
     screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 - score_text.get_height() // 2 + 50))
