@@ -128,6 +128,16 @@ def check_collisions():
         if projectile in alien_projectiles:
             alien_projectiles.remove(projectile)
 
+
+def score_ingame():
+    global score
+    global running
+    
+    score_ingame_text = font.render("Score: " + str(score), True, WHITE)
+    screen.blit(score_ingame_text, (WIDTH - 120, 20))
+    pygame.display.flip()
+      
+      
 def game_over():
     global running
 
@@ -209,7 +219,10 @@ while True:
         # Controllo vittoria
         if len(aliens) == 0:
             next_level()
-
+        
+        #visualizzazione punteggio in-game    
+        score_ingame()
+        
         # Aggiornamento dello schermo
         pygame.display.flip()
         clock.tick(60)
